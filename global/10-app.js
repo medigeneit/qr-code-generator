@@ -16,7 +16,8 @@
     const ECC_HINT = { L: 'recovers 7%', M: 'recovers 15%', Q: 'recovers 25%', H: 'recovers 30%' };
     const SETTINGS_KEY = 'qr-settings-v1';
 
-    const state = { type: 'url', fg: '#111111', bg: '#ffffff', style: 'square', ecc: 'M', margin: 2, size: 1024 };
+    const DEFAULTS = { fg: '#111111', bg: '#ffffff', style: 'square', ecc: 'M', margin: 2, size: 1024 };
+    const state = { type: 'url', ...DEFAULTS };
     try {
         Object.assign(state, JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {});
     } catch (e) {}
@@ -266,6 +267,7 @@
         el.addEventListener('change', schedule);
     });
 
+    const segSyncs = [];
     function bindSeg(id, key, cast) {
         const box = $(id);
         const sync = () => box.querySelectorAll('button').forEach((b) => b.setAttribute('aria-checked', String(String(state[key]) === b.dataset.v)));
@@ -278,6 +280,7 @@
             if (key === 'ecc') $('ecc-hint').textContent = ECC_HINT[state.ecc];
             if (key !== 'size') render();
         });
+        segSyncs.push(sync);
         sync();
     }
     bindSeg('f-style', 'style');
@@ -334,6 +337,17 @@
             b.setAttribute('aria-pressed', String(PRESETS[i].fg === state.fg && PRESETS[i].bg === state.bg));
         });
     }
+
+    $('reset').addEventListener('click', () => {
+        Object.assign(state, DEFAULTS);
+        segSyncs.forEach((sync) => sync());
+        $('ecc-hint').textContent = ECC_HINT[state.ecc];
+        marginInput.value = state.margin;
+        $('margin-val').textContent = state.margin + ' modules';
+        setColor('bg', state.bg);
+        setColor('fg', state.fg);
+        toast('Settings reset');
+    });
 
     // ---------- export ----------
     const toast = (msg) => {

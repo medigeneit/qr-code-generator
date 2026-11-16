@@ -6,7 +6,9 @@
         </section>
 
         <div class="studio">
-            <section class="card editor" aria-label="QR code content and style">
+            <section class="card editor input" aria-label="Input">
+                <h2 class="section-title">Input</h2>
+
                 <div class="tabs" role="tablist" aria-label="Content type">
                     <button type="button" role="tab" data-type="url" aria-selected="true">URL</button>
                     <button type="button" role="tab" data-type="text" aria-selected="false">Text</button>
@@ -90,9 +92,13 @@
                     </label>
                 </div>
 
-                <hr>
+            </section>
 
-                <h2 class="section-title">Style</h2>
+            <section class="card editor settings" aria-label="Settings">
+                <div class="settings-head">
+                    <h2 class="section-title">Settings</h2>
+                    <button type="button" class="reset" id="reset">Reset</button>
+                </div>
 
                 <div class="field">
                     <span>Color presets</span>
@@ -151,7 +157,7 @@
                 </div>
             </section>
 
-            <aside class="card preview" aria-label="Preview">
+            <aside class="card preview output" aria-label="Output">
                 <div class="frame">
                     <canvas id="qr" width="640" height="640" role="img" aria-label="QR code preview"></canvas>
                     <div class="empty" id="empty" hidden>

@@ -132,10 +132,17 @@ textarea {
 /* studio */
 .studio {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 380px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+        "input input"
+        "output settings";
     gap: 20px;
-    align-items: start;
+    align-items: stretch;
 }
+
+.input { grid-area: input; }
+.settings { grid-area: settings; }
+.output { grid-area: output; }
 
 .card {
     border: 1px solid var(--line);
@@ -367,10 +374,64 @@ hr {
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 0 0 1px var(--line);
 }
 
+/* settings */
+.settings-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.reset {
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.reset:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.settings {
+    justify-content: space-between;
+    gap: 14px;
+    padding: 22px;
+}
+
+.settings .grid2 {
+    display: contents;
+}
+
+.settings .field {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.settings .field > span:first-child {
+    flex: none;
+}
+
+.settings .seg button {
+    padding: 6px 14px;
+}
+
+.settings .color input[type="text"] {
+    width: 104px;
+}
+
+.settings input[type="range"] {
+    width: 160px;
+}
+
 /* preview */
 .preview {
-    position: sticky;
-    top: 84px;
     display: flex;
     flex-direction: column;
     gap: 14px;
@@ -528,11 +589,14 @@ hr {
 @media (max-width: 900px) {
     .studio {
         grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            "input"
+            "output"
+            "settings";
     }
 
     .preview {
         position: static;
-        order: -1;
     }
 
     .frame {
@@ -558,6 +622,12 @@ hr {
     .editor,
     .preview {
         padding: 16px;
+    }
+
+    .settings .field {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
     }
 }
 
