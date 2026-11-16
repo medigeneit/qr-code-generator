@@ -12,8 +12,12 @@ Check out the live demo: [QR Code Generator](https://msilabs.github.io/qr-code-g
 
 ## Features
 
-- **User-Friendly:** Intuitive interface for seamless usage.
-- **Responsive Design:** Works flawlessly on both mobile and desktop devices.
+- **Live preview:** the code updates as you type, no button to press.
+- **Content types:** URL, plain text, Wi-Fi login, email, phone call and SMS.
+- **Styling:** color presets or any foreground/background color, square, rounded or dot modules, error correction level and quiet zone.
+- **Export:** PNG at 512, 1024 or 2048 px, print-ready SVG, or copy the image to the clipboard.
+- **Private:** everything runs in the browser. Style settings are kept in `localStorage`; Wi-Fi passwords are never saved.
+- **Light and dark theme**, responsive on phones and desktops.
 - **Free & Open Source:** Open for everyone to use and contribute.
 
 ## Prerequisites
@@ -32,6 +36,15 @@ npm run build   # site in dist/
 ```
 
 For a sub-path such as GitHub Pages: `node alo build --base /qr-code-generator/`
+
+```
+pages/page.alo           page markup
+components/SiteHeader.alo header with GitHub star button and theme toggle
+components/SiteFooter.alo footer
+global/style.css         all styles
+global/01-qrcode.min.js  QR encoder (QRCode.js)
+global/10-app.js         form, drawing and export
+```
 
 ## Deploy
 

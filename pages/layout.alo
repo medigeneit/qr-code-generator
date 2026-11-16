@@ -10,9 +10,9 @@
     <meta property="og:title" content="{{ data.site.name }}">
     <meta property="og:description" content="{{ data.site.description }}">
     <meta property="og:url" content="{{ data.site.url }}/{{ data.site.repo.split('/').pop() }}/">
-    <meta property="og:image" content="https://raw.githubusercontent.com/msilabs/qr-code-generator/refs/heads/main/screenshot.png">
+    <meta property="og:image" content="{{ data.site.url }}/{{ data.site.repo.split('/').pop() }}/og.png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/msilabs/qr-code-generator/refs/heads/main/screenshot.png">
+    <meta name="twitter:image" content="{{ data.site.url }}/{{ data.site.repo.split('/').pop() }}/og.png">
     <script>try { var t = localStorage.getItem('msilabs-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
