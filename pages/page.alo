@@ -1,9 +1,11 @@
 <template>
     <main class="page">
         <section class="hero">
-            <span class="eyebrow"><i></i> Runs 100% in your browser</span>
             <h1>Make a QR code <span class="grad">in seconds.</span></h1>
-            <p>Links, Wi-Fi, email or phone numbers. Style it your way and export a crisp PNG or a print-ready SVG. No sign-up, no tracking.</p>
+            <div class="hero-side">
+                <span class="eyebrow"><i></i> Runs 100% in your browser</span>
+                <p>Links, Wi-Fi, email or phone numbers. Export a crisp PNG or print-ready SVG. No sign-up, no tracking.</p>
+            </div>
         </section>
 
         <div class="studio">
