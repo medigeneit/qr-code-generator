@@ -1,23 +1,26 @@
 <head>
+    <title>{{ data.site.name }} · {{ data.site.tagline }}</title>
     <meta name="description" content="{{ data.site.description }}">
-    <meta name="keywords" content="QR Code Generator, open-source, QR code, responsive design">
-    <meta name="author" content="MD SAIFUL ISLAM">
-    <link rel="canonical" href="https://msilabs.github.io/qr-code-generator/">
-    <meta name="robots" content="index, follow">
-
-    <title>{{ data.site.name }}</title>
-
+    <link rel="canonical" href="{{ data.site.url }}/{{ data.site.repo.split('/').pop() }}/">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b0d14" media="(prefers-color-scheme: dark)">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="msilabs">
     <meta property="og:title" content="{{ data.site.name }}">
-    <meta property="og:url" content="https://msilabs.github.io/qr-code-generator/">
-    <meta property="og:image" content="https://raw.githubusercontent.com/msilabs/qr-code-generator/refs/heads/main/screenshot.png">
     <meta property="og:description" content="{{ data.site.description }}">
-
+    <meta property="og:url" content="{{ data.site.url }}/{{ data.site.repo.split('/').pop() }}/">
+    <meta property="og:image" content="https://raw.githubusercontent.com/msilabs/qr-code-generator/refs/heads/main/screenshot.png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ data.site.name }}">
-    <meta name="twitter:description" content="{{ data.site.description }}">
     <meta name="twitter:image" content="https://raw.githubusercontent.com/msilabs/qr-code-generator/refs/heads/main/screenshot.png">
+    <script>try { var t = localStorage.getItem('msilabs-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 </head>
 
 <template>
+    <SiteHeader />
     <slot />
+    <SiteFooter />
 </template>

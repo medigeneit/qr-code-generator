@@ -1,4 +1,5 @@
 <template>
+    <main class="page">
     <div class="container">
         <h2>QR Code Generator</h2>
         <input type="search" id="text-input" placeholder="Enter text or URL">
@@ -10,4 +11,5 @@
             <button id="copy-btn" onclick="copyQRCode()" style="display: none;">Copy</button>
         </div>
     </div>
+    </main>
 </template>
