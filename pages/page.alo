@@ -2,10 +2,7 @@
     <main class="page">
         <section class="hero">
             <h1>Make a QR code <span class="grad">in seconds.</span></h1>
-            <div class="hero-side">
-                <span class="eyebrow"><i></i> Runs 100% in your browser</span>
-                <p>Links, Wi-Fi, email or phone numbers. Export a crisp PNG or print-ready SVG. No sign-up, no tracking.</p>
-            </div>
+            <p>Free, private and runs in your browser.</p>
         </section>
 
         <div class="studio">
