@@ -1,0 +1,23 @@
+<head>
+    <meta name="description" content="{{ data.site.description }}">
+    <meta name="keywords" content="QR Code Generator, open-source, QR code, responsive design">
+    <meta name="author" content="MD SAIFUL ISLAM">
+    <link rel="canonical" href="https://msilabs.github.io/qr-code-generator/">
+    <meta name="robots" content="index, follow">
+
+    <title>{{ data.site.name }}</title>
+
+    <meta property="og:title" content="{{ data.site.name }}">
+    <meta property="og:url" content="https://msilabs.github.io/qr-code-generator/">
+    <meta property="og:image" content="https://raw.githubusercontent.com/msilabs/qr-code-generator/refs/heads/main/screenshot.png">
+    <meta property="og:description" content="{{ data.site.description }}">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ data.site.name }}">
+    <meta name="twitter:description" content="{{ data.site.description }}">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/msilabs/qr-code-generator/refs/heads/main/screenshot.png">
+</head>
+
+<template>
+    <slot />
+</template>

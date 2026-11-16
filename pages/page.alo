@@ -1,0 +1,13 @@
+<template>
+    <div class="container">
+        <h2>QR Code Generator</h2>
+        <input type="search" id="text-input" placeholder="Enter text or URL">
+        <button onclick="generateQRCode()">Generate QR Code</button>
+        <div id="loader" style="display: none;"></div>
+        <div id="qr-container"></div>
+        <div id="button-container">
+            <button id="download-btn" onclick="downloadQRCode()" style="display: none;">Download</button>
+            <button id="copy-btn" onclick="copyQRCode()" style="display: none;">Copy</button>
+        </div>
+    </div>
+</template>

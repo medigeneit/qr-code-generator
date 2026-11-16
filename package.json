@@ -1,0 +1,15 @@
+{
+    "name": "qr-code-generator",
+    "private": true,
+    "description": "A simple and responsive QR code generator",
+    "engines": {
+        "node": ">=22"
+    },
+    "scripts": {
+        "dev": "alo dev",
+        "build": "alo build"
+    },
+    "devDependencies": {
+        "@msilabs/alo": "^1.1.0"
+    }
+}
