@@ -110,7 +110,7 @@
     };
 
     function logoRect(M, unit, off) {
-        const pad = 0.8;
+        const pad = 0.45;
         const side = (M.box.k - pad * 2) * unit;
         const scale = Math.min(side / logo.w, side / logo.h);
         const w = logo.w * scale;
@@ -123,6 +123,11 @@
         const inset = 0.2;
         const x = off + (M.box.start + inset) * unit;
         return { x, y: x, s: (M.box.k - inset * 2) * unit, r: 1.2 * unit, lw: 0.16 * unit };
+    }
+
+    function logoClipRadius(frame, p) {
+        const gap = Math.min(p.x - frame.x, p.y - frame.y);
+        return Math.max(frame.r - gap, 0);
     }
 
     function loadLogo(file) {
@@ -215,7 +220,12 @@
             ctx.lineWidth = f.lw;
             ctx.stroke();
             const p = logoRect(M, cell, off);
+            ctx.save();
+            ctx.beginPath();
+            roundRect(ctx, p.x, p.y, p.w, p.h, logoClipRadius(f, p));
+            ctx.clip();
             ctx.drawImage(logo.source, p.x, p.y, p.w, p.h);
+            ctx.restore();
         }
     }
 
@@ -254,7 +264,9 @@
             const fr = logoFrame(M, 1, m);
             const f = (v) => +v.toFixed(3);
             image = `<rect x="${f(fr.x)}" y="${f(fr.y)}" width="${f(fr.s)}" height="${f(fr.s)}" rx="${f(fr.r)}" fill="${state.bg}" stroke="${state.fg}" stroke-width="${f(fr.lw)}"/>`;
-            image += `<image href="${logo.url}" x="${f(p.x)}" y="${f(p.y)}" width="${f(p.w)}" height="${f(p.h)}" preserveAspectRatio="xMidYMid meet"/>`;
+            const cr = logoClipRadius(fr, p);
+            image += `<clipPath id="logo-clip"><rect x="${f(p.x)}" y="${f(p.y)}" width="${f(p.w)}" height="${f(p.h)}" rx="${f(cr)}"/></clipPath>`;
+            image += `<image clip-path="url(#logo-clip)" href="${logo.url}" x="${f(p.x)}" y="${f(p.y)}" width="${f(p.w)}" height="${f(p.h)}" preserveAspectRatio="xMidYMid meet"/>`;
         }
         return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${total} ${total}" width="1024" height="1024" shape-rendering="${state.style === 'square' ? 'crispEdges' : 'geometricPrecision'}"><rect width="100%" height="100%" fill="${state.bg}"/><g fill="${state.fg}"><path d="${d}"/>${finders}</g>${image}</svg>`;
     }

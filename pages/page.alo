@@ -21,7 +21,7 @@
                 <div class="pane" data-pane="url">
                     <label class="field">
                         <span>Website address</span>
-                        <input id="f-url" type="url" inputmode="url" placeholder="https://example.com" value="https://msilabs.github.io/qr-code-generator/" autocomplete="off" spellcheck="false">
+                        <input id="f-url" type="url" inputmode="url" placeholder="https://example.com" autocomplete="off" spellcheck="false">
                     </label>
                 </div>
 
