@@ -85,6 +85,69 @@
         return { n, cells, version: (n - 17) / 4 };
     }
 
+    // ---------- logo ----------
+    const LOGO_MIN_BOX = 5;
+    const LOGO_MAX_VERSION = 10;
+    const LOGO_MAX_BYTES = 5 * 1024 * 1024;
+    let logo = null;
+    const eccNow = () => (logo ? 'H' : state.ecc);
+
+    function logoBox(n) {
+        let k = Math.floor(n * 0.22);
+        if (k % 2 === 0) k -= 1;
+        return { k, start: (n - k) / 2 };
+    }
+
+    function logoProblem(M) {
+        if (M.version > LOGO_MAX_VERSION) return 'Content is too long for a logo. Shorten it or remove the logo.';
+        if (logoBox(M.n).k < LOGO_MIN_BOX) return 'Content is too short for a logo. Add more text or remove the logo.';
+        return '';
+    }
+
+    const inLogoBox = (M, r, c) => {
+        const b = M.box;
+        return !!b && r >= b.start && r < b.start + b.k && c >= b.start && c < b.start + b.k;
+    };
+
+    function logoRect(M, unit, off) {
+        const pad = 0.8;
+        const side = (M.box.k - pad * 2) * unit;
+        const scale = Math.min(side / logo.w, side / logo.h);
+        const w = logo.w * scale;
+        const h = logo.h * scale;
+        const center = off + (M.box.start + M.box.k / 2) * unit;
+        return { x: center - w / 2, y: center - h / 2, w, h };
+    }
+
+    function logoFrame(M, unit, off) {
+        const inset = 0.2;
+        const x = off + (M.box.start + inset) * unit;
+        return { x, y: x, s: (M.box.k - inset * 2) * unit, r: 1.2 * unit, lw: 0.16 * unit };
+    }
+
+    function loadLogo(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onerror = reject;
+            reader.onload = () => {
+                const img = new Image();
+                img.onerror = reject;
+                img.onload = () => {
+                    const nw = img.naturalWidth || 256;
+                    const nh = img.naturalHeight || 256;
+                    const scale = Math.min(1, 512 / Math.max(nw, nh));
+                    const c = document.createElement('canvas');
+                    c.width = Math.max(1, Math.round(nw * scale));
+                    c.height = Math.max(1, Math.round(nh * scale));
+                    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+                    resolve({ source: c, url: c.toDataURL('image/png'), w: c.width, h: c.height, name: file.name });
+                };
+                img.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
     const inFinder = (n, r, c) => (r < 7 && c < 7) || (r < 7 && c >= n - 7) || (r >= n - 7 && c < 7);
     const finderOrigins = (n) => [[0, 0], [0, n - 7], [n - 7, 0]];
 
@@ -113,7 +176,7 @@
         ctx.beginPath();
         for (let r = 0; r < M.n; r++) {
             for (let c = 0; c < M.n; c++) {
-                if (!M.cells[r][c] || (state.style !== 'square' && inFinder(M.n, r, c))) continue;
+                if (!M.cells[r][c] || inLogoBox(M, r, c) || (state.style !== 'square' && inFinder(M.n, r, c))) continue;
                 const x = off + c * cell;
                 const y = off + r * cell;
                 if (state.style === 'dots') {
@@ -128,17 +191,31 @@
         }
         ctx.fill();
 
-        if (state.style === 'square') return;
-        for (const [r0, c0] of finderOrigins(M.n)) {
-            const x = off + c0 * cell;
-            const y = off + r0 * cell;
+        if (state.style !== 'square') {
+            for (const [r0, c0] of finderOrigins(M.n)) {
+                const x = off + c0 * cell;
+                const y = off + r0 * cell;
+                ctx.beginPath();
+                roundRect(ctx, x, y, cell * 7, cell * 7, cell * 2);
+                roundRect(ctx, x + cell, y + cell, cell * 5, cell * 5, cell * 1.3);
+                ctx.fill('evenodd');
+                ctx.beginPath();
+                roundRect(ctx, x + cell * 2, y + cell * 2, cell * 3, cell * 3, cell * 0.9);
+                ctx.fill();
+            }
+        }
+
+        if (M.box && logo) {
+            const f = logoFrame(M, cell, off);
             ctx.beginPath();
-            roundRect(ctx, x, y, cell * 7, cell * 7, cell * 2);
-            roundRect(ctx, x + cell, y + cell, cell * 5, cell * 5, cell * 1.3);
-            ctx.fill('evenodd');
-            ctx.beginPath();
-            roundRect(ctx, x + cell * 2, y + cell * 2, cell * 3, cell * 3, cell * 0.9);
+            roundRect(ctx, f.x, f.y, f.s, f.s, f.r);
+            ctx.fillStyle = state.bg;
             ctx.fill();
+            ctx.strokeStyle = state.fg;
+            ctx.lineWidth = f.lw;
+            ctx.stroke();
+            const p = logoRect(M, cell, off);
+            ctx.drawImage(logo.source, p.x, p.y, p.w, p.h);
         }
     }
 
@@ -154,7 +231,7 @@
         let d = '';
         for (let r = 0; r < M.n; r++) {
             for (let c = 0; c < M.n; c++) {
-                if (!M.cells[r][c] || (state.style !== 'square' && inFinder(M.n, r, c))) continue;
+                if (!M.cells[r][c] || inLogoBox(M, r, c) || (state.style !== 'square' && inFinder(M.n, r, c))) continue;
                 const x = m + c;
                 const y = m + r;
                 if (state.style === 'dots') d += `M${x + 0.08} ${y + 0.5}a0.42 0.42 0 1 0 0.84 0a0.42 0.42 0 1 0 -0.84 0Z`;
@@ -171,7 +248,15 @@
                 finders += `<path d="${rrPath(x + 2, y + 2, 3, 3, 0.9)}"/>`;
             }
         }
-        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${total} ${total}" width="1024" height="1024" shape-rendering="${state.style === 'square' ? 'crispEdges' : 'geometricPrecision'}"><rect width="100%" height="100%" fill="${state.bg}"/><g fill="${state.fg}"><path d="${d}"/>${finders}</g></svg>`;
+        let image = '';
+        if (M.box && logo) {
+            const p = logoRect(M, 1, m);
+            const fr = logoFrame(M, 1, m);
+            const f = (v) => +v.toFixed(3);
+            image = `<rect x="${f(fr.x)}" y="${f(fr.y)}" width="${f(fr.s)}" height="${f(fr.s)}" rx="${f(fr.r)}" fill="${state.bg}" stroke="${state.fg}" stroke-width="${f(fr.lw)}"/>`;
+            image += `<image href="${logo.url}" x="${f(p.x)}" y="${f(p.y)}" width="${f(p.w)}" height="${f(p.h)}" preserveAspectRatio="xMidYMid meet"/>`;
+        }
+        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${total} ${total}" width="1024" height="1024" shape-rendering="${state.style === 'square' ? 'crispEdges' : 'geometricPrecision'}"><rect width="100%" height="100%" fill="${state.bg}"/><g fill="${state.fg}"><path d="${d}"/>${finders}</g>${image}</svg>`;
     }
 
     // ---------- contrast ----------
@@ -205,18 +290,25 @@
         const text = payload();
         lastText = text;
         matrix = null;
+        let problem = '';
         if (text) {
             try {
-                matrix = buildMatrix(text, state.ecc);
+                matrix = buildMatrix(text, eccNow());
             } catch (e) {
                 matrix = null;
+            }
+            if (matrix && logo) {
+                problem = logoProblem(matrix);
+                if (problem) matrix = null;
+                else matrix.box = logoBox(matrix.n);
             }
         }
         const ok = !!matrix;
         canvas.hidden = !ok;
         empty.hidden = ok;
         actionBtns.forEach((b) => (b.disabled = !ok));
-        $('empty-text').textContent = text ? 'Too much content for one QR code. Shorten it or lower error correction.' : 'Fill in the form to see your QR code';
+        const tooMuch = logo ? 'Too much content for a QR code with a logo. Shorten it or remove the logo.' : 'Too much content for one QR code. Shorten it or lower error correction.';
+        $('empty-text').textContent = text ? problem || tooMuch : 'Fill in the form to see your QR code';
         if (!ok) {
             meta.textContent = '';
             warn.hidden = true;
@@ -270,14 +362,19 @@
     const segSyncs = [];
     function bindSeg(id, key, cast) {
         const box = $(id);
-        const sync = () => box.querySelectorAll('button').forEach((b) => b.setAttribute('aria-checked', String(String(state[key]) === b.dataset.v)));
+        const current = () => (key === 'ecc' ? eccNow() : state[key]);
+        const sync = () =>
+            box.querySelectorAll('button').forEach((b) => {
+                b.setAttribute('aria-checked', String(String(current()) === b.dataset.v));
+                if (key === 'ecc') b.disabled = !!logo;
+            });
         box.addEventListener('click', (e) => {
             const b = e.target.closest('button');
-            if (!b) return;
+            if (!b || b.disabled) return;
             state[key] = cast ? cast(b.dataset.v) : b.dataset.v;
             sync();
             saveSettings();
-            if (key === 'ecc') $('ecc-hint').textContent = ECC_HINT[state.ecc];
+            if (key === 'ecc') $('ecc-hint').textContent = ECC_HINT[eccNow()];
             if (key !== 'size') render();
         });
         segSyncs.push(sync);
@@ -338,10 +435,42 @@
         });
     }
 
+    const logoInput = $('f-logo');
+    function refreshLogoUi() {
+        $('logo-name').textContent = logo ? logo.name : '';
+        $('logo-pick').textContent = logo ? 'Change' : 'Upload';
+        $('logo-remove').hidden = !logo;
+        $('logo-hint').textContent = logo ? 'level H is locked on' : 'uses level H';
+        segSyncs.forEach((sync) => sync());
+        $('ecc-hint').textContent = ECC_HINT[eccNow()];
+    }
+
+    $('logo-pick').addEventListener('click', () => logoInput.click());
+    $('logo-remove').addEventListener('click', () => {
+        logo = null;
+        logoInput.value = '';
+        refreshLogoUi();
+        render();
+    });
+    logoInput.addEventListener('change', async () => {
+        const file = logoInput.files[0];
+        logoInput.value = '';
+        if (!file) return;
+        if (!file.type.startsWith('image/')) return toast('Please choose an image file.');
+        if (file.size > LOGO_MAX_BYTES) return toast('Image is too large. Max 5 MB.');
+        try {
+            logo = await loadLogo(file);
+        } catch (e) {
+            return toast('Could not read this image.');
+        }
+        refreshLogoUi();
+        render();
+    });
+
     $('reset').addEventListener('click', () => {
         Object.assign(state, DEFAULTS);
-        segSyncs.forEach((sync) => sync());
-        $('ecc-hint').textContent = ECC_HINT[state.ecc];
+        logo = null;
+        refreshLogoUi();
         marginInput.value = state.margin;
         $('margin-val').textContent = state.margin + ' modules';
         setColor('bg', state.bg);
