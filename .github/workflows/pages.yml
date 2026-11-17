@@ -27,6 +27,15 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Set site info from repository
+        env:
+          OWNER: ${{ github.repository_owner }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          jq --arg owner "${OWNER,,}" --arg repo "$REPOSITORY" \
+            '.url = "https://\($owner).github.io" | .repo = "https://github.com/\($repo)"' \
+            data/site.json > "$RUNNER_TEMP/site.json"
+          mv "$RUNNER_TEMP/site.json" data/site.json
       - name: Build
         env:
           REPO: ${{ github.event.repository.name }}

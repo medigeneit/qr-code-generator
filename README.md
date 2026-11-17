@@ -49,3 +49,7 @@ global/10-app.js         form, drawing and export
 ## Deploy
 
 The GitHub Actions workflow in `.github/workflows/pages.yml` builds the site and publishes `dist/`. In the repository settings, set Pages "Source" to "GitHub Actions".
+
+## License
+
+[MIT](LICENSE) © msilabs
