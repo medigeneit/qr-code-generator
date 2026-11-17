@@ -320,7 +320,9 @@
         empty.hidden = ok;
         actionBtns.forEach((b) => (b.disabled = !ok));
         const tooMuch = logo ? 'Too much content for a QR code with a logo. Shorten it or remove the logo.' : 'Too much content for one QR code. Shorten it or lower error correction.';
-        $('empty-text').textContent = text ? problem || tooMuch : 'Fill in the form to see your QR code';
+        const hint = state.type === 'url' ? 'Enter a link to see your QR code here' : 'Fill in the form to see your QR code here';
+        $('empty-text').textContent = text ? problem || tooMuch : hint;
+        empty.classList.toggle('is-error', !!text);
         if (!ok) {
             meta.textContent = '';
             warn.hidden = true;
@@ -449,7 +451,10 @@
 
     const logoInput = $('f-logo');
     function refreshLogoUi() {
-        $('logo-name').textContent = logo ? logo.name : '';
+        $('logo-name').textContent = logo ? logo.name : 'No logo';
+        $('logo-img').hidden = !logo;
+        $('logo-placeholder').toggleAttribute('hidden', !!logo);
+        if (logo) $('logo-img').src = logo.url;
         $('logo-pick').textContent = logo ? 'Change' : 'Upload';
         $('logo-remove').hidden = !logo;
         $('logo-hint').textContent = logo ? 'level H is locked on' : 'uses level H';
@@ -538,7 +543,14 @@
         try {
             if (!navigator.clipboard || !window.ClipboardItem) throw new Error('unsupported');
             await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob() })]);
-            toast('Image copied to clipboard');
+            const btn = $('copy');
+            btn.textContent = 'Copied ✓';
+            btn.classList.add('is-done');
+            clearTimeout(btn.t);
+            btn.t = setTimeout(() => {
+                btn.textContent = 'Copy';
+                btn.classList.remove('is-done');
+            }, 2000);
         } catch (e) {
             toast('Copy is not supported here. Use Download instead.');
         }
