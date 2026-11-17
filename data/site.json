@@ -4,5 +4,6 @@
     "description": "This open-source project allows users to easily generate QR codes using a simple and responsive web interface.",
     "lang": "en",
     "url": "https://msilabs.github.io",
-    "repo": "https://github.com/msilabs/qr-code-generator"
+    "repo": "https://github.com/msilabs/qr-code-generator",
+    "original": "https://github.com/msilabs/qr-code-generator"
 }
